@@ -5,7 +5,6 @@ import (
 	"github.com/layasugar/otel-collector/jaegerexporter"
 	"github.com/layasugar/otel-collector/tailsamplingprocessor"
 	"go.opentelemetry.io/collector/component"
-	"go.opentelemetry.io/collector/config/configmapprovider"
 	"go.opentelemetry.io/collector/service"
 	"go.opentelemetry.io/collector/service/defaultcomponents"
 	"log"
@@ -24,9 +23,9 @@ func main() {
 	}
 
 	set := service.CollectorSettings{
-		BuildInfo:         info,
-		Factories:         factories,
-		ConfigMapProvider: configmapprovider.NewFile("otel-collector.yaml"),
+		BuildInfo:      info,
+		Factories:      factories,
+		ConfigProvider: service.MustNewDefaultConfigProvider([]string{"otel-collector.yaml"}, []string{}),
 	}
 
 	app, err := service.New(set)

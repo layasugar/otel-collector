@@ -22,12 +22,12 @@ processors:
         {
           name: probattr,
           type: probabilistic,
-          probabilistic: {sampling_percentage: 50}
+          probabilistic: { sampling_percentage: 50 }
         },
         {
           name: trace-timeout,
           type: latency,
-          latency: {threshold_ms: 5000}
+          latency: { threshold_ms: 5000 }
         },
         {
           name: mysql-timeout,
@@ -35,18 +35,18 @@ processors:
           composite:
             {
               max_total_spans_per_second: 1000,
-              policy_order: [is_mysql, time-out],
+              policy_order: [ is_mysql, time-out ],
               composite_sub_policy:
                 [
                   {
                     name: is_mysql,
                     type: string_attribute,
-                    string_attribute: {key: "db.type", values: [mysql]}
+                    string_attribute: { key: "db.type", values: [ mysql ] }
                   },
                   {
                     name: time-out,
                     type: latency,
-                    latency: {threshold_ms: 1000}
+                    latency: { threshold_ms: 1000 }
                   }
                 ]
             }
@@ -54,18 +54,22 @@ processors:
         {
           name: http-error,
           type: status_code,
-          status_code: {status_codes: [ERROR, UNSET]}
+          status_code: { status_codes: [ ERROR, UNSET ] }
         },
         {
           name: sample_with_high_priority,
           type: numeric_attribute,
-          numeric_attribute: {key: "sampling.priority", min_value: 1, max_value: 1}
+          numeric_attribute: { key: "sampling.priority", min_value: 1, max_value: 1 }
         }
       ]
 
 service:
   pipelines:
     traces:
-      receivers: [otlp]
-      processors: [tail_sampling]
-      exporters: [jaeger]
+      receivers: [ otlp ]
+      processors: [ tail_sampling ]
+      exporters: [ jaeger ]
+  telemetry:
+    metrics:
+      level: 1
+      address: 127.0.0.1:22345
